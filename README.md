@@ -73,8 +73,9 @@ Un fork du repo original . Puis, un Pull Request contenant **vos noms** et :
    - `./hcxpcaptool -E essidlist -I identitylist -U usernamelist -o outputHCX PMKID_handshake.pcap`. on suit les recommandations du tuto avant de produire un fichier `outputHCX` qui contient le hash.
    - ![](Capture-hcxpcaptool1.PNG)
    - D'après la documentation le `hash-type` devrait être 22000 pour PMKID EAPOL.
-   - On utilise maintenant hashcat là dessus avec cette commande (avec les bon chemin de fichiers): `./hashcat -a 0 -m 22000 outputHCX files/passphrases.txt --show`
+   - On utilise maintenant hashcat là dessus avec cette commande (avec les bon chemin de fichiers): `./hashcat --force -a 3 -w 3 -m 22000 outputHCX files/passphrases.txt `
    - ![](Capture-hashcat.PNG)
+   - On voit bien qu'il nous affiche le hash suivi de la bonne clé `admin123`
 
 -	Envoyer le hash du commit et votre username GitHub et **les noms des participants** par email au professeur et à l'assistant
 
