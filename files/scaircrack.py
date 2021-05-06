@@ -61,8 +61,12 @@ def getConstants(pcap):
             handshake.append(frame)
 
 # PMKID is 16 octet 4 before the end of the frame            
-def getPMKID(frame):
-    return raw(frame)[-20:-4]
+def getPMKID(wpa,apmac, clientmac):
+    for frame in wpa:
+        if frame.haslayer(WPA_key) and frame.addr2 == apmac and frame.addr1 == clientmac:
+            return raw(frame)[-20:-4]
+    # if no handshake
+    return None
 
 
                 
@@ -73,31 +77,32 @@ def getHandshakeInfo(capture):
         if frame.haslayer(Dot11): 
             # only give ssid name that have handshake[0]
             if frame.type == 0 and frame.subtype == 0:
-                ssid.append( (frame.info.decode('ascii'),frame.addr1,frame.addr2, capture.index(frame)) )
+                ssid.append( (frame.info.decode('ascii'),frame.addr1,frame.addr2) )
     return ssid
 
 def crack(pmkid, ssid, apmac, clientmac, passphrases):
-    apmac = apmac.replace(':','').encode()
-    clientmac = clientmac.replace(':','').encode()
     
+    apmac = apmac.replace(':','')
+    clientmac = clientmac.replace(':','')
+
+    apmac = a2b_hex(apmac.replace(':', ''))
+    clientmac = a2b_hex(clientmac.replace(':', ''))
+
+    ssid = ssid.encode()
     for passphrase in passphrases:
-        passphrase = passphrase.strip()
+        passphrase = passphrase.strip() 
         print("Testing passphrase : ", passphrase)
-        
-        
-
         # compute pmk
-        pmk = pbkdf2(hashlib.sha1,passphrase.encode(), ssid.encode(), 4096, 32)
-        # compute pmkid of passprhase
-        found_pmkid = hmac.new(pmk, PMK_STRING + apmac + clientmac, hashlib.sha1).digest()
+        pmk = pbkdf2(hashlib.sha1,passphrase.encode(), ssid, 4096, 32)
+        
+        computed_pmkid = hmac.new(pmk, PMK_STRING + apmac + clientmac, hashlib.sha1)
 
-        print(found_pmkid.digest()[:16])
-        print(pmkid)
-        if found_pmkid.digest()[:16] == pmkid:
-            print("Found")
-            return 
+        
+        if computed_pmkid.digest()[:16] == pmkid:
+            return passphrase
 
     print("Dict attack on pmkid failed, probably passphrase is not in dict file")
+    return None
 
 if __name__ == "__main__":
     print("Reading pcap...")
@@ -107,7 +112,7 @@ if __name__ == "__main__":
     if len(infos) == 0:
         print("no handshake in capture exit..")
         exit()
-    print("Availables ssid , apmac , clientmac , index of frame in capture : ")
+    print("Availables ssid , apmac , clientmac : ")
     for (i, item) in enumerate(infos):
         print(i, item)
 
@@ -120,18 +125,15 @@ if __name__ == "__main__":
         print("Unvalid index.. exit ")
         exit()
     
-    pmkid = getPMKID(wpa[infos[index][3]])
+    pmkid = getPMKID(wpa,infos[index][1],infos[index][2])
     
     # opening dictionnary
     passphrases = open('files/passphrases.txt').readlines()
 
     result = crack(pmkid,infos[index][0],infos[index][1],infos[index][2], passphrases)
 
-    result = ""
-    if(result != "passphrase not found "):
-        print("Passphrase found it's : ",result)
-    else:
-        print(result)
+    if result:
+        print("Passphrase found annd it's .. ",result)
 
 
 
