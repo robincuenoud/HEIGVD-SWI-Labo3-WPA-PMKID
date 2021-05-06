@@ -107,7 +107,7 @@ def crack(pmkid, ssid, apmac, clientmac, passphrases):
 if __name__ == "__main__":
     print("Reading pcap...")
     # Read capture file -- it contains beacon, authentication, associacion, handshake and data
-    wpa=rdpcap("files/PMKID_handshake.pcap") 
+    wpa=rdpcap("PMKID_handshake.pcap") 
     infos  = getHandshakeInfo(wpa)
     if len(infos) == 0:
         print("no handshake in capture exit..")
@@ -128,7 +128,7 @@ if __name__ == "__main__":
     pmkid = getPMKID(wpa,infos[index][1],infos[index][2])
     
     # opening dictionnary
-    passphrases = open('files/passphrases.txt').readlines()
+    passphrases = open('passphrases.txt').readlines()
 
     result = crack(pmkid,infos[index][0],infos[index][1],infos[index][2], passphrases)
 

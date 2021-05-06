@@ -60,7 +60,12 @@ A manière de comparaison, réaliser l'attaque sur le [fichier de capture](files
 Un fork du repo original . Puis, un Pull Request contenant **vos noms** et :
 
 - Script ```pmkid_attack.py``` **abondamment commenté/documenté** + fichier wordlist
+   
    - Capture d’écran de votre script en action
+   
+     ![image-20210506210105752](result_2)
+   
+     Ici il y’a deux clients différents sur le même SSID, le script permet de choisir lequel on veut utiliser. 
 - Captures d'écran de votre exercice 3
 -	Envoyer le hash du commit et votre username GitHub et **les noms des participants** par email au professeur et à l'assistant
 
