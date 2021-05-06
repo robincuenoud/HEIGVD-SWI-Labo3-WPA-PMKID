@@ -57,7 +57,7 @@ A manière de comparaison, réaliser l'attaque sur le [fichier de capture](files
 
 ## Livrables
 
-Un fork du repo original . Puis, un Pull Request contenant **vos noms** et :
+Un fork du repo original . Puis, un Pull Request contenant **vos noms** (Robin Cuénoud, Florian Mülhauser), et :
 
 - Script ```pmkid_attack.py``` **abondamment commenté/documenté** + fichier wordlist
   
@@ -70,7 +70,7 @@ Un fork du repo original . Puis, un Pull Request contenant **vos noms** et :
 - Captures d'écran de votre exercice 3
 
    - On commence par executer la commande suivant sur la capture pcap:
-   - `./hcxpcaptool -E essidlist -I identitylist -U usernamelist -o outputHCX PMKID_handshake.pcap`. on suit les recommandations du tuto avant de produire un fichier `outputHCX` qui contient le hash.
+   - `./hcxpcaptool -z outputHCX PMKID_handshake.pcap`. on suit les recommandations du tuto avant de produire un fichier `outputHCX` qui contient le hash.
    - ![](Capture-hcxpcaptool1.PNG)
    - D'après la documentation le `hash-type` devrait être 22000 pour PMKID EAPOL.
    - On utilise maintenant hashcat là dessus avec cette commande (avec les bon chemin de fichiers): `./hashcat --force -a 3 -w 3 -m 22000 outputHCX files/passphrases.txt `
